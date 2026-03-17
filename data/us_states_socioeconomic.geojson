@@ -1,0 +1,165 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "California"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-119.4179, 36.7783]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Texas"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-99.9018, 31.9686]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Florida"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-81.5158, 27.6648]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "New York"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.0059, 40.7128]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Illinois"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-89.3985, 40.6331]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Pennsylvania"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-77.1945, 41.2033]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Ohio"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-82.9071, 40.4173]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Georgia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-82.9001, 32.1656]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "North Carolina"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-79.0193, 35.7596]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Michigan"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-84.5555, 44.3148]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Arizona"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-111.0937, 34.0489]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Washington"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-120.7401, 47.7511]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Colorado"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.7821, 39.5501]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Massachusetts"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-71.3824, 42.4072]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "Virginia"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-78.6569, 37.4316]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "State": "New Jersey"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-74.4057, 40.0583]
+      }
+    }
+  ]
+}
