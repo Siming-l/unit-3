@@ -3,18 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Unit 3 Bubble Chart</title>
+    <title>Education and Economic Patterns Across German States</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-    <div id="page-header">
-        <h1 id="page-title">Activity 8 D3 Bubble Chart</h1>
-        <p id="page-description">
-            A simple D3 bubble chart based on city population data from the Week 2 example.
-        </p>
+
+    <div class="page-wrapper">
+
+        <!-- Page header with title and scenario description -->
+        <div id="page-header" class="page-header">
+            <h1 id="page-title">Education and Economic Patterns Across German States</h1>
+            <p id="page-description">
+                This interactive map explores socioeconomic indicators across the 16 states of Germany.
+                The visualization is designed for comparing regional patterns in density, development, GDP per capita, and unemployment.
+            </p>
+        </div>
+
+        <!-- Main visualization area -->
+        <main class="viz-layout">
+            <section id="map-section">
+                <div id="map-container"></div>
+            </section>
+        </main>
+
     </div>
 
+    <!-- Load libraries before main script -->
     <script src="lib/d3.v7.js"></script>
+    <script src="lib/topojson/topojson.js"></script>
     <script src="js/main.js"></script>
+
 </body>
 </html>

@@ -1,170 +1,320 @@
-// Week 8 D3 Foundations
-// Activity 8 Bubble Chart
-// Simple bubble chart based on the Week 2 city population dataset
+// Activity 9: D3 Basemap
+// Germany states basemap with neighboring regional background
+// Interaction for lab 2
 
-// execute script when window is loaded
-window.onload = function(){
+window.onload = setMap;
+window.addEventListener("resize", debounce(redrawMap, 180));
 
-    // =======================
-    // SVG dimension variables
-    // =======================
-    var w = 980,
-        h = 500;
+// Global variables for loaded datasets
+let csvData, germanyTopo, neighborTopo;
 
-    // =======================
-    // Create SVG container
-    // =======================
-    var container = d3.select("body")
-        .append("svg")
-        .attr("width", w)
-        .attr("height", h)
-        .attr("class", "container");
+// Attribute array from the Germany CSV file
+var attrArray = [
+    "area_km2",
+    "population_2023",
+    "population_density_2023",
+    "hdi_2022",
+    "gdp_per_capita_eur_2023",
+    "unemployment_rate_nov_2025"
+];
 
-    // =======================
-    // Create inner rectangle
-    // =======================
-    var innerRect = container.append("rect")
-        .datum(400)
-        .attr("width", function(d){
-            return d * 2;   // 800
-        })
-        .attr("height", function(d){
-            return d;       // 400
-        })
-        .attr("class", "innerRect")
-        .attr("x", 90)
-        .attr("y", 70)
-        .style("fill", "#FFFFFF");
+// Human-readable labels for tooltip
+var attrNames = {
+    area_km2: "Area (km²)",
+    population_2023: "Population (2023)",
+    population_density_2023: "Population Density (2023)",
+    hdi_2022: "HDI (2022)",
+    gdp_per_capita_eur_2023: "GDP per Capita (€ 2023)",
+    unemployment_rate_nov_2025: "Unemployment Rate (2025)"
+};
 
-    // =======================
-    // Week 2 dataset
-    // =======================
-    var cityPop = [
-        {
-            city: "Madison",
-            population: 233209
-        },
-        {
-            city: "Milwaukee",
-            population: 594833
-        },
-        {
-            city: "Green Bay",
-            population: 104057
-        },
-        {
-            city: "Superior",
-            population: 27244
-        }
+// Default attribute shown first in tooltip
+var expressed = attrArray[0];
+
+// Load external files
+function setMap() {
+    var promises = [
+        d3.csv("data/germany_16_states_lab2.csv"),
+        d3.json("data/germany_16_states_lab2.topojson"),
+        d3.json("data/germany_neighbor_regions_background.topojson")
     ];
 
-    // =======================
-    // Find minimum and maximum population values
-    // =======================
-    var minPop = d3.min(cityPop, function(d){
-        return d.population;
+    Promise.all(promises).then(callback).catch(function(error) {
+        console.error("Error loading data:", error);
     });
 
-    var maxPop = d3.max(cityPop, function(d){
-        return d.population;
+    function callback(data) {
+        csvData = data[0];
+        germanyTopo = data[1];
+        neighborTopo = data[2];
+
+        console.log("CSV loaded:", csvData);
+        console.log("Germany TopoJSON loaded:", germanyTopo);
+        console.log("Neighbor TopoJSON loaded:", neighborTopo);
+
+        drawMap();
+    }
+}
+
+// Redraw map after resize
+function redrawMap() {
+    if (csvData && germanyTopo && neighborTopo) {
+        drawMap();
+    }
+}
+
+// Draw the map
+function drawMap() {
+    var container = document.getElementById("map-container");
+
+    if (!container) {
+        console.error("map-container not found in index.html");
+        return;
+    }
+
+    // Clear previous map before redraw
+    d3.select("#map-container").selectAll("*").remove();
+
+    var width = container.clientWidth;
+    var height = Math.max(560, Math.min(820, width * 0.72));
+
+    // Create SVG container
+    var map = d3.select("#map-container")
+        .append("svg")
+        .attr("class", "map")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("viewBox", "0 0 " + width + " " + height)
+        .attr("preserveAspectRatio", "xMidYMid meet");
+
+    // Projection for Germany
+    var projection = d3.geoConicEqualArea()
+        .center([0, 51.0])
+        .rotate([-10.5, 0])
+        .parallels([47, 55])
+        .translate([width / 2, height / 2]);
+
+    var path = d3.geoPath()
+        .projection(projection);
+
+    // Convert Germany TopoJSON to GeoJSON
+    var states = topojson.feature(
+        germanyTopo,
+        germanyTopo.objects.NUTS_RG_10M_2024_4326
+    ).features;
+
+    // Keep only Germany NUTS level 1 states
+    states = states.filter(function(d) {
+        return d.properties.CNTR_CODE === "DE" && d.properties.LEVL_CODE === 1;
     });
 
-    // =======================
-    // Create scales
-    // =======================
-    // x scale for circle horizontal positions
-    var x = d3.scaleLinear()
-        .range([130, 760])
-        .domain([0, 3]);
+    // Join CSV data to state polygons
+    states = joinData(states, csvData);
 
-    // y scale for circle vertical positions
-    var y = d3.scaleLinear()
-        .range([430, 70])
-        .domain([0, 700000]);
+    // Convert neighboring background TopoJSON to GeoJSON
+    var neighbors = topojson.feature(
+        neighborTopo,
+        neighborTopo.objects["germany_neighbor_regions_background.topojson"]
+    ).features;
 
-    var color = d3.scaleLinear()
-        .range(["#FDBE85", "#D94701"])
-        .domain([minPop, maxPop]);
+    // Fit projection to Germany only
+    projection.fitExtent(
+        [[30, 30], [width - 30, height - 30]],
+        {
+            type: "FeatureCollection",
+            features: states
+        }
+    );
 
-    // =======================
-    // Create y-axis
-    // =======================
-    var yAxis = d3.axisLeft(y);
+    // Optional graticule
+    var graticule = d3.geoGraticule()
+        .step([5, 5]);
 
-    var axis = container.append("g")
-        .attr("class", "axis")
-        .attr("transform", "translate(90, 0)")
-        .call(yAxis);
+    map.append("path")
+        .datum(graticule.outline())
+        .attr("class", "gratBackground")
+        .attr("d", path);
 
-    // =======================
-    // Create title
-    // =======================
-    var title = container.append("text")
-        .attr("class", "title")
-        .attr("text-anchor", "middle")
-        .attr("x", 490)
-        .attr("y", 40)
-        .text("City Populations");
-
-    // =======================
-    // Create circles
-    // =======================
-    var circles = container.selectAll(".circles")
-        .data(cityPop)
+    map.selectAll(".gratLines")
+        .data(graticule.lines())
         .enter()
-        .append("circle")
-        .attr("class", "circles")
-        .attr("id", function(d){
-            return d.city;
-        })
-        .attr("r", function(d){
-            var area = d.population * 0.01;
-            return Math.sqrt(area / Math.PI);
-        })
-        .attr("cx", function(d, i){
-            return x(i);
-        })
-        .attr("cy", function(d){
-            return y(d.population);
-        })
-        .style("fill", function(d){
-            return color(d.population);
-        });
+        .append("path")
+        .attr("class", "gratLines")
+        .attr("d", path);
 
-    // =======================
-    // Create labels
-    // =======================
-    var labels = container.selectAll(".labels")
-        .data(cityPop)
+    // Draw neighboring regions first
+    map.selectAll(".neighbor")
+        .data(neighbors)
         .enter()
-        .append("text")
-        .attr("class", "labels")
-        .attr("text-anchor", "left")
-        .attr("y", function(d){
-            return y(d.population) - 8;
-        });
+        .append("path")
+        .attr("class", "neighbor")
+        .attr("d", path);
 
-    var nameLine = labels.append("tspan")
-        .attr("class", "nameLine")
-        .attr("x", function(d, i){
-            var radius = Math.sqrt(d.population * 0.01 / Math.PI);
-            return x(i) + radius + 5;
+    // Draw Germany states on top
+    map.selectAll(".states")
+        .data(states)
+        .enter()
+        .append("path")
+        .attr("class", function(d) {
+            var code = d.properties.state_code || d.properties.NUTS_ID || "NA";
+            return "states " + code;
         })
-        .text(function(d){
-            return d.city;
-        });
-
-    var format = d3.format(",");
-
-    var popLine = labels.append("tspan")
-        .attr("class", "popLine")
-        .attr("x", function(d, i){
-            var radius = Math.sqrt(d.population * 0.01 / Math.PI);
-            return x(i) + radius + 5;
+        .attr("d", path)
+        .on("mouseover", function(event, d) {
+            highlight(d.properties);
+            setLabel(event, d.properties);
         })
-        .attr("dy", "15")
-        .text(function(d){
-            return "Pop. " + format(d.population);
+        .on("mousemove", moveLabel)
+        .on("mouseout", function(event, d) {
+            dehighlight(d.properties);
+            d3.select(".infoLabel").remove();
         });
 
-};
+    console.log("Germany states drawn:", states.length);
+    console.log("Neighbor regions drawn:", neighbors.length);
+}
+
+// Join CSV attributes to GeoJSON by matching NUTS1 codes
+function joinData(states, csvData) {
+    var csvLookup = {};
+
+    csvData.forEach(function(row) {
+        var key = String(row.nuts1).trim();
+        csvLookup[key] = row;
+    });
+
+    states.forEach(function(feature) {
+        var geojsonProps = feature.properties;
+        var geojsonKey = String(geojsonProps.NUTS_ID).trim();
+        var match = csvLookup[geojsonKey];
+
+        if (match) {
+            geojsonProps.state = match.state;
+            geojsonProps.state_code = match.state_code;
+
+            attrArray.forEach(function(attr) {
+                geojsonProps[attr] = parseFloat(match[attr]);
+            });
+        } else {
+            console.warn("No CSV match found for:", geojsonKey, geojsonProps.NUTS_NAME);
+
+            geojsonProps.state = geojsonProps.NUTS_NAME || "Unknown state";
+            geojsonProps.state_code = geojsonProps.NUTS_ID || "NA";
+
+            attrArray.forEach(function(attr) {
+                geojsonProps[attr] = null;
+            });
+        }
+    });
+
+    return states;
+}
+
+// Highlight state boundary on hover
+function highlight(props) {
+    var className = props.state_code || props.NUTS_ID || "NA";
+
+    d3.selectAll("." + className)
+        .style("stroke", "#111")
+        .style("stroke-width", "2px");
+}
+
+// Reset style on mouseout
+function dehighlight(props) {
+    var className = props.state_code || props.NUTS_ID || "NA";
+
+    d3.selectAll("." + className)
+        .style("stroke", "#666")
+        .style("stroke-width", "1.15px");
+}
+
+// Create tooltip
+function setLabel(event, props) {
+    var stateName = props.state || props.NUTS_NAME || "Unknown state";
+    var stateCode = props.state_code || props.NUTS_ID || "NA";
+
+    var labelAttribute =
+        "<h2>" + stateName +
+        " <span class='infolabel-name'>(" + stateCode + ")</span></h2>";
+
+    var info =
+        "<b>" + attrNames[expressed] + ":</b> " + formatValue(expressed, props[expressed]) +
+        "<br><b>Population:</b> " + formatValue("population_2023", props.population_2023) +
+        "<br><b>Density:</b> " + formatValue("population_density_2023", props.population_density_2023) +
+        "<br><b>GDP per Capita:</b> " + formatValue("gdp_per_capita_eur_2023", props.gdp_per_capita_eur_2023) +
+        "<br><b>Unemployment:</b> " + formatValue("unemployment_rate_nov_2025", props.unemployment_rate_nov_2025) +
+        "<br><b>HDI:</b> " + formatValue("hdi_2022", props.hdi_2022);
+
+    d3.select(".infoLabel").remove();
+
+    d3.select("body")
+        .append("div")
+        .attr("class", "infoLabel")
+        .html(labelAttribute + info);
+
+    moveLabel(event);
+}
+
+// Move tooltip with cursor
+function moveLabel(event) {
+    var label = d3.select(".infoLabel");
+    if (label.empty()) return;
+
+    var labelWidth = label.node().getBoundingClientRect().width;
+
+    var x = event.clientX + 15;
+    var y = event.clientY - 75;
+
+    if (x + labelWidth > window.innerWidth - 20) {
+        x = event.clientX - labelWidth - 15;
+    }
+
+    if (y < 20) {
+        y = event.clientY + 20;
+    }
+
+    label
+        .style("left", x + "px")
+        .style("top", y + "px");
+}
+
+// Format values for tooltip
+function formatValue(attr, value) {
+    if (value == null || isNaN(value)) return "No data";
+
+    if (attr === "area_km2") {
+        return d3.format(",.0f")(value);
+    }
+    if (attr === "population_2023") {
+        return d3.format(",.0f")(value);
+    }
+    if (attr === "population_density_2023") {
+        return d3.format(",.1f")(value);
+    }
+    if (attr === "hdi_2022") {
+        return d3.format(".3f")(value);
+    }
+    if (attr === "gdp_per_capita_eur_2023") {
+        return "€" + d3.format(",.0f")(value);
+    }
+    if (attr === "unemployment_rate_nov_2025") {
+        return d3.format(".1f")(value) + "%";
+    }
+
+    return value;
+}
+
+// Debounce helper for resize redraw
+function debounce(func, wait) {
+    var timeout;
+
+    return function() {
+        var context = this;
+        var args = arguments;
+
+        clearTimeout(timeout);
+        timeout = setTimeout(function() {
+            func.apply(context, args);
+        }, wait);
+    };
+}
