@@ -1,22 +1,34 @@
-# Education and Economic Patterns Across German States
+# Socioeconomic Development Across the 16 German States
 
-## Project Description
-This project visualizes education and economic patterns across the 16 states of Germany.  
-The map combines a Germany state boundary layer with surrounding regional background polygons to provide geographic context. The interface is designed for comparing regional socioeconomic patterns.
+## Project Overview
+This project visualizes regional socioeconomic development across the 16 states of Germany using a coordinated choropleth map and bar chart built with D3.
+
+The application is designed to support comparison of state-level differences in:
+- area
+- population
+- population density
+- HDI
+- GDP per capita
+- unemployment rate
+
+The main map shows Germany’s 16 states as the primary enumeration units, with neighboring regional polygons included as geographic background context. A coordinated bar chart provides a second view of the same mapped attribute, allowing users to compare magnitude and ranking across states.
+
+## Project Theme
+The project focuses on socioeconomic development across German states. Although the initial topic idea included education, the available dataset does not contain a direct education variable. Therefore, the project was refined to emphasize broader regional development and economic patterns using HDI, GDP per capita, unemployment, population, density, and area.
 
 ## Data Files
 - `germany_16_states_lab2.csv`  
   State-level socioeconomic attribute data for the 16 German states.
 
 - `germany_16_states_lab2.topojson`  
-  TopoJSON polygon boundaries for Germany at NUTS Level 1.  
-  This is the main enumeration unit layer.
+  TopoJSON polygon boundaries for Germany at NUTS Level 1.
 
 - `germany_neighbor_regions_background.topojson`  
-  TopoJSON polygons used as a neighboring background context layer.
+  TopoJSON polygons used as neighboring geographic background.
 
 ## Attributes
-The CSV file includes the following numerical attributes:
+The CSV includes the following numerical variables:
+- `area_km2`
 - `population_2023`
 - `population_density_2023`
 - `hdi_2022`
@@ -24,51 +36,46 @@ The CSV file includes the following numerical attributes:
 - `unemployment_rate_nov_2025`
 
 ## Methods
-This project follows the Week 9 D3 mapping workflow used in class:
+This project follows the D3 coordinated visualization workflow from class:
+
 1. Load external data using `Promise.all()`
-2. Translate TopoJSON to GeoJSON using `topojson.feature()`
-3. Create an equal-area projection appropriate for choropleth mapping
-4. Create a D3 path generator
-5. Draw background polygons and main enumeration units in the browser
-6. Add retrieve interaction with hover labels and highlighting
+2. Convert TopoJSON to GeoJSON using `topojson.feature()`
+3. Join CSV attribute data to GeoJSON features using a shared NUTS-1 identifier
+4. Create a classed choropleth map for one expressed attribute
+5. Draw a coordinated bar chart using the same expressed attribute
+6. Sort bars from low to high values
+7. Use coordinated highlighting and tooltip labels for retrieve interaction
+8. Redraw the layout responsively on window resize
 
 ## Design Notes
-- The projection is fit only to the Germany state polygons, not the neighboring background.
-  This keeps Germany large and centered in the map frame.
-- The neighboring polygons are included only as contextual background.
-- The graticule is optional and kept visually subtle so that it does not overpower the map.
-- Hover interaction provides a coordinated retrieve function through state highlighting and a floating information label.
+- Germany state polygons are the main thematic layer.
+- Neighboring polygons are included only as contextual background.
+- The projection is fit to Germany only so the study area remains centered and prominent.
+- The choropleth uses a quantile classification with five classes.
+- The coordinated bar chart uses the same color classification as the map.
+- The bar chart is annotated with a dynamic title and a vertical axis.
+- Hovering over a state or its corresponding bar highlights both views and displays a tooltip.
 
 ## Sources
-Data Sources
+1. Destatis (German Federal Statistical Office)  
+   Area, population, and population density data.
 
-1. Destatis (German Federal Statistical Office)
-   Population, area, and population density data for German states.
+2. Eurostat  
+   Regional GDP per capita data and GISCO boundary data.
 
-2. Eurostat (European Statistical Office)
-   Regional GDP per capita data (NUTS Level 1).
+3. Global Data Lab  
+   Subnational HDI estimates.
 
-3. Global Data Lab
-   Subnational Human Development Index (HDI) estimates.
-
-4. Bundesagentur für Arbeit (Federal Employment Agency of Germany)
+4. Bundesagentur für Arbeit  
    State-level unemployment rates.
 
-5. Eurostat GISCO
-   NUTS Level 1 boundary data (TopoJSON / GeoJSON).
-
-Note:
-This dataset is a compiled dataset combining multiple official sources.
-Values are drawn from different years (approximately 2022–2025) depending on availability.
-
 ## Notes
-The dataset used in this project is compiled from multiple authoritative sources.
-Although the values are not from a single unified dataset, all attributes are standardized to comparable state-level indicators suitable for choropleth mapping and multivariate analysis.
+This dataset is a compiled state-level dataset built from multiple authoritative sources. Variables come from different years depending on data availability.
 
-The dataset combines the most recent available data for each variable.
+Most indicators are from 2023.  
+HDI is from 2022.  
+Unemployment is recorded as November 2025 in the current dataset.
 
-Most indicators (population, GDP, density) are from 2023.
-HDI data is from 2022, as more recent subnational estimates are not available.
-Unemployment data is aligned to 2023 for consistency.
+This approach balances comparability and recent availability across the 16 German states.
 
-This approach balances data availability and comparability across German states.
+I used a coordinated bar chart as the secondary view because it provides a clearer ranked comparison of a single expressed attribute across the 16 German states. This supports the choropleth map well and aligns with the coordinated visualization requirements of Activity 10.

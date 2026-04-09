@@ -3,35 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Education and Economic Patterns Across German States</title>
+    <title>Socioeconomic Development Across the 16 German States</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div class="page-wrapper">
 
-        <!-- Page header with title and scenario description -->
-        <div id="page-header" class="page-header">
-            <h1 id="page-title">Education and Economic Patterns Across German States</h1>
+        <header id="page-header" class="page-header">
+            <h1 id="page-title">Socioeconomic Development Across the 16 German States</h1>
             <p id="page-description">
-                This interactive map explores socioeconomic indicators across the 16 states of Germany.
-                The visualization is designed for comparing regional patterns in density, development, GDP per capita, and unemployment.
+                This interactive visualization explores regional socioeconomic development across the 16 states of Germany.
+                The choropleth map and coordinated bar chart support comparison of population, density, HDI, GDP per capita,
+                and unemployment patterns across states.
             </p>
-        </div>
+        </header>
 
-        <!-- Main visualization area -->
         <main class="viz-layout">
             <section id="map-section">
                 <div id="map-container"></div>
             </section>
+
+            <section id="chart-section">
+                <div id="chart-container"></div>
+            </section>
         </main>
+
+        <footer class="page-footer">
+            <p>
+                Data sources include Destatis, Eurostat, Global Data Lab, Bundesagentur für Arbeit, and Eurostat GISCO.
+                This compiled dataset combines the most recent available state-level indicators across multiple years.
+            </p>
+        </footer>
 
     </div>
 
-    <!-- Load libraries before main script -->
     <script src="lib/d3.v7.js"></script>
     <script src="lib/topojson/topojson.js"></script>
     <script src="js/main.js"></script>
-
 </body>
 </html>

@@ -9,7 +9,7 @@ html, body {
 }
 
 .page-wrapper {
-    width: min(1280px, 94vw);
+    width: min(1320px, 95vw);
     margin: 0 auto;
     padding: 18px 0 28px;
 }
@@ -34,23 +34,33 @@ html, body {
 }
 
 .page-footer {
-    margin-top: 14px;
+    margin-top: 16px;
 }
 
 .viz-layout {
-    display: block;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    align-items: flex-start;
 }
 
 #map-section {
-    width: 100%;
+    flex: 1 1 58%;
+    min-width: 420px;
 }
 
-#map-container {
+#chart-section {
+    flex: 1 1 38%;
+    min-width: 340px;
+}
+
+#map-container,
+#chart-container {
     width: 100%;
     position: relative;
 }
 
-/* Main SVG map frame */
+/* Map */
 .map {
     display: block;
     width: 100%;
@@ -60,8 +70,17 @@ html, body {
     box-sizing: border-box;
 }
 
-/* Graticule background and lines
-   Keep them subtle so they do not overpower the thematic map */
+/* Chart */
+.chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #ffffff;
+    border: 1.5px solid #999;
+    box-sizing: border-box;
+}
+
+/* Graticule */
 .gratBackground {
     fill: #cfe3f5;
 }
@@ -73,30 +92,68 @@ html, body {
     opacity: 0.9;
 }
 
-/* Neighboring background polygons */
+/* Neighbor regions */
 .neighbor {
     fill: #f2f2f2;
     stroke: #c9c9c9;
     stroke-width: 0.8px;
 }
 
-/* Main Germany state polygons */
+/* Germany states */
 .states {
-    fill: #d9d9d9;
     stroke: #666;
     stroke-width: 1.15px;
-    transition: fill 0.15s ease, stroke 0.15s ease;
+    transition: fill 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
 }
 
-.states:hover {
-    fill: #cfcfcf;
+/* Bar chart */
+.chartBackground {
+    fill: #f8f8f8;
 }
 
-/* Floating tooltip for retrieve interaction */
+.bar {
+    stroke: #ffffff;
+    stroke-width: 1px;
+    transition: fill 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
+}
+
+.chartFrame {
+    fill: none;
+    stroke: #999;
+    stroke-width: 1.5px;
+    shape-rendering: crispEdges;
+}
+
+.chartTitle {
+    font-size: 1.1rem;
+    font-weight: 700;
+    fill: #222;
+}
+
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #999;
+    stroke-width: 1px;
+    shape-rendering: crispEdges;
+}
+
+.axis text {
+    font-size: 0.78rem;
+    fill: #666;
+}
+
+.barLabel {
+    font-size: 0.62rem;
+    fill: #555;
+    text-anchor: end;
+}
+
+/* Tooltip */
 .infoLabel {
     position: absolute;
     min-width: 220px;
-    max-width: 290px;
+    max-width: 300px;
     padding: 10px 12px;
     background: rgba(34, 34, 34, 0.95);
     color: #fff;
@@ -117,4 +174,15 @@ html, body {
 
 .infolabel-name {
     color: #d8e8ff;
+}
+
+@media (max-width: 980px) {
+    .viz-layout {
+        flex-direction: column;
+    }
+
+    #map-section,
+    #chart-section {
+        min-width: 100%;
+    }
 }
