@@ -1,24 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Basic page metadata -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socioeconomic Development Across the 16 German States</title>
+
+    <!-- Main stylesheet -->
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
 
     <div class="page-wrapper">
 
+        <!-- Page title and project introduction -->
         <header id="page-header" class="page-header">
             <h1 id="page-title">Socioeconomic Development Across the 16 German States</h1>
+
             <p id="page-description">
-                This interactive visualization explores regional socioeconomic development across the 16 states of Germany.
-                The choropleth map and coordinated bar chart support comparison of population, density, HDI, GDP per capita,
-                and unemployment patterns across states.
+                This coordinated visualization explores how socioeconomic development varies across Germany’s 16 states.
+                The choropleth map and linked bar chart support comparison of regional population size, population density, human development, GDP per capita, unemployment, and land area.
+            </p>
+
+            <p class="story-text">
+                A key motivation for this project is that development is uneven across Germany. Some states have very large populations but moderate density, while others are geographically small yet economically strong or highly urbanized.
+                By switching between indicators, the visualization helps reveal regional contrasts, outliers, and possible relationships between demographic pressure, economic performance, and social development. 
+                The coordinated bar chart complements the map by making it easier to compare magnitude and ranking across states, which are harder to interpret from the map alone.
             </p>
         </header>
 
+        <!-- Main layout for the coordinated visualization -->
         <main class="viz-layout">
             <section id="map-section">
                 <div id="map-container"></div>
@@ -29,17 +40,37 @@
             </section>
         </main>
 
-        <footer class="page-footer">
+        <!-- Short explanation of interaction -->
+        <section class="context-section">
+            <h2>How to Read This Visualization</h2>
             <p>
-                Data sources include Destatis, Eurostat, Global Data Lab, Bundesagentur für Arbeit, and Eurostat GISCO.
-                This compiled dataset combines the most recent available state-level indicators across multiple years.
+                Use the dropdown menu on the map to switch the expressed attribute. The map colors and the ranked bar chart update together. Hover over a state or its matching bar to highlight both views and retrieve the value for the currently selected indicator.
+            </p>
+        </section>
+
+        <!-- Source notes and dataset explanation -->
+        <footer class="page-footer">
+            <h2>Data Sources</h2>
+            <p>
+                Area, population, and population density data are based on Destatis statistics.
+                GDP per capita data and boundary files are based on Eurostat and Eurostat GISCO.
+                HDI estimates are from Global Data Lab. Unemployment rates are based on
+                Bundesagentur für Arbeit statistics.
+            </p>
+            <p>
+                Most indicators are from 2023, HDI is from 2022, and unemployment is reported for November 2025.
+                Area is included as a general state land-area measure in square kilometers.
+                These differing years reflect the most recent comparable values available across all 16 German states.
             </p>
         </footer>
 
     </div>
 
+    <!-- Libraries -->
     <script src="lib/d3.v7.js"></script>
     <script src="lib/topojson/topojson.js"></script>
+
+    <!-- Main visualization script -->
     <script src="js/main.js"></script>
 </body>
 </html>

@@ -1,4 +1,6 @@
 /* Stylesheet by Siming, 2026 */
+/* Lab 2 final styling */
+/* This stylesheet controls layout, typography, map, chart, tooltip, and responsive behavior */
 
 html, body {
     margin: 0;
@@ -8,16 +10,23 @@ html, body {
     color: #222;
 }
 
+/* Main page wrapper:
+   keeps content centered and controls overall page width */
 .page-wrapper {
     width: min(1320px, 95vw);
     margin: 0 auto;
     padding: 18px 0 28px;
 }
 
+/* ==============================
+   HEADER & TEXT
+============================== */
+
 .page-header {
     margin-bottom: 18px;
 }
 
+/* Main title */
 .page-header h1 {
     margin: 0 0 10px 0;
     font-size: clamp(28px, 3vw, 46px);
@@ -25,18 +34,36 @@ html, body {
     font-weight: 700;
 }
 
+/* Paragraph text
+   IMPORTANT: no max-width so text aligns with visualization width */
 .page-header p,
-.page-footer p {
-    margin: 0;
+.page-footer p,
+.context-section p {
+    margin: 0 0 12px 0;
     font-size: clamp(15px, 1.1vw, 19px);
-    line-height: 1.5;
+    line-height: 1.55;
     color: #444;
 }
 
+/* Section spacing */
+.context-section,
 .page-footer {
-    margin-top: 16px;
+    margin-top: 18px;
 }
 
+/* Section headings */
+.context-section h2,
+.page-footer h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.25rem;
+    color: #222;
+}
+
+/* ==============================
+   LAYOUT (MAP + CHART)
+============================== */
+
+/* Flex layout for side-by-side visualization */
 .viz-layout {
     display: flex;
     flex-wrap: wrap;
@@ -44,23 +71,58 @@ html, body {
     align-items: flex-start;
 }
 
+/* Map section takes more width */
 #map-section {
     flex: 1 1 58%;
     min-width: 420px;
 }
 
+/* Chart section takes less width */
 #chart-section {
     flex: 1 1 38%;
     min-width: 340px;
 }
 
+/* Containers for SVG elements */
 #map-container,
 #chart-container {
     width: 100%;
     position: relative;
 }
 
-/* Map */
+/* ==============================
+   DROPDOWN (REEXPRESS CONTROL)
+============================== */
+
+/* Dropdown positioned inside the map */
+.dropdown {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 20;
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 0.95rem;
+    font-weight: 700;
+
+    padding: 6px 10px;
+    border: 1px solid #999;
+    border-radius: 4px;
+
+    background: #ffffff;
+    color: #222;
+
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.18);
+}
+
+.dropdown option {
+    font-weight: normal;
+}
+
+/* ==============================
+   MAP
+============================== */
+
 .map {
     display: block;
     width: 100%;
@@ -70,17 +132,7 @@ html, body {
     box-sizing: border-box;
 }
 
-/* Chart */
-.chart {
-    display: block;
-    width: 100%;
-    height: auto;
-    background: #ffffff;
-    border: 1.5px solid #999;
-    box-sizing: border-box;
-}
-
-/* Graticule */
+/* Graticule (background grid) */
 .gratBackground {
     fill: #cfe3f5;
 }
@@ -92,31 +144,62 @@ html, body {
     opacity: 0.9;
 }
 
-/* Neighbor regions */
+/* Neighbor countries (background context layer) */
 .neighbor {
     fill: #f2f2f2;
     stroke: #c9c9c9;
     stroke-width: 0.8px;
 }
 
-/* Germany states */
+/* Germany states (main thematic layer) */
 .states {
     stroke: #666;
     stroke-width: 1.15px;
+    vector-effect: non-scaling-stroke;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+
     transition: fill 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
 }
 
-/* Bar chart */
+/* Highlight overlay (prevents interior hole artifacts) */
+.stateHighlight {
+    fill: none;
+    stroke: blue;
+    stroke-width: 2.5px;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    pointer-events: none;
+}
+
+/* ==============================
+   CHART
+============================== */
+
+.chart {
+    display: block;
+    width: 100%;
+    height: auto;
+    background: #ffffff;
+    border: 1.5px solid #999;
+    box-sizing: border-box;
+}
+
+/* Chart background */
 .chartBackground {
     fill: #f8f8f8;
 }
 
+/* Bars */
 .bar {
     stroke: #ffffff;
     stroke-width: 1px;
+
     transition: fill 0.15s ease, stroke 0.15s ease, stroke-width 0.15s ease;
 }
 
+/* Chart frame */
 .chartFrame {
     fill: none;
     stroke: #999;
@@ -124,12 +207,14 @@ html, body {
     shape-rendering: crispEdges;
 }
 
+/* Chart title */
 .chartTitle {
-    font-size: 1.1rem;
+    font-size: 0.98rem;
     font-weight: 700;
     fill: #222;
 }
 
+/* Axis styling */
 .axis path,
 .axis line {
     fill: none;
@@ -143,39 +228,52 @@ html, body {
     fill: #666;
 }
 
+/* Labels below bars */
 .barLabel {
     font-size: 0.62rem;
-    fill: #555;
+    fill: #1a1a1a;
     text-anchor: end;
+    font-weight: 700;
 }
 
-/* Tooltip */
+/* ==============================
+   TOOLTIP (DYNAMIC LABEL)
+============================== */
+
 .infoLabel {
     position: absolute;
-    min-width: 220px;
-    max-width: 300px;
-    padding: 10px 12px;
-    background: rgba(34, 34, 34, 0.95);
+    top: -100px;
+
+    min-width: 180px;
+    max-width: 280px;
+
+    padding: 10px 14px;
+
+    background: rgba(34, 34, 34, 0.96);
     color: #fff;
-    border-radius: 6px;
+
+    border-radius: 8px;
     pointer-events: none;
-    font-size: 13px;
-    line-height: 1.45;
-    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.25);
+
+    font-size: 14px;
+    line-height: 1.5;
+
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.28);
     z-index: 999;
 }
 
 .infoLabel h2 {
     margin: 0 0 6px 0;
-    font-size: 16px;
+    font-size: 17px;
     line-height: 1.2;
     font-weight: 700;
 }
 
-.infolabel-name {
-    color: #d8e8ff;
-}
+/* ==============================
+   RESPONSIVE DESIGN
+============================== */
 
+/* Tablet: stack map and chart vertically */
 @media (max-width: 980px) {
     .viz-layout {
         flex-direction: column;
@@ -184,5 +282,49 @@ html, body {
     #map-section,
     #chart-section {
         min-width: 100%;
+    }
+}
+
+/* Phone: optimize layout and readability */
+@media (max-width: 768px) {
+
+    .page-wrapper {
+        width: 96vw;
+        padding: 12px 0 20px;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+    }
+
+    /* Smaller dropdown */
+    .dropdown {
+        top: 10px;
+        left: 10px;
+        width: min(78vw, 320px);
+        font-size: 0.9rem;
+        padding: 6px 8px;
+    }
+
+    /* Smaller chart title */
+    .chartTitle {
+        font-size: 0.9rem;
+    }
+
+    /* Smaller bar labels */
+    .barLabel {
+        font-size: 0.52rem;
+    }
+
+    /* Smaller tooltip */
+    .infoLabel {
+        min-width: 150px;
+        max-width: 220px;
+        font-size: 12px;
+        padding: 8px 10px;
+    }
+
+    .infoLabel h2 {
+        font-size: 15px;
     }
 }
